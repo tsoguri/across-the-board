@@ -168,7 +168,7 @@ class AppDisplay:
             st.info("Select a clue above to start a conversation.")
             return
 
-        chat_service = ChatService(model=st.session_state.clue_model)
+        chat_service = ChatService(model=CLAUDE_MODELS[1])
         if st.session_state.pending_clue_response:
             self._get_opener_response(chat_service=chat_service)
 
