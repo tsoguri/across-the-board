@@ -12,11 +12,11 @@ Personalized crosswords auto-generated for your interests to spur your memory an
 - **Deep dives**: explore facts further with built-in research + LLM Q&A
 
 <p align="center">
-  <img src="docs/img/app.png" alt="app" width="300"/>
+  <img src="docs/img/app.png" alt="app" width="500"/>
 </p>
 
 <p align="center">
-  <img src="docs/img/deep-dive.png" alt="deep dive" width="300"/>
+  <img src="docs/img/deep-dive.png" alt="deep dive" width="500"/>
 </p>
 
 ## Running It Locally
