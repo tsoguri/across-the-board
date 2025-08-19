@@ -134,7 +134,7 @@ def main() -> int:
     try:
         if not os.path.exists(JSON_PATH):
             print(f"ERROR: JSON file not found at {JSON_PATH}", file=sys.stderr)
-            return 2
+            return 0
 
         N_PEEK = 20
         buf: List[Dict[str, Any]] = []
