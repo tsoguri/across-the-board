@@ -68,7 +68,10 @@ class AppDisplay:
                 "Select difficulty level",
                 options=DIFFICULTY_LEVEL,
                 index=DIFFICULTY_LEVEL.index(st.session_state.difficulty_level),
-                help="How difficult do you want your crossword to be?",
+                help="""How difficult do you want your crossword to be? 
+Easy – common facts, high school–level knowledge, shorter answers.
+Medium – some specific history/science/pop culture, college-level knowledge.
+Hard – tougher references, grad-level knowledge, trickier clues.""",
             )
             with st.expander("Advanced Settings"):
                 clue_model = st.selectbox(
