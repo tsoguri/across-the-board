@@ -9,7 +9,7 @@ wants to be challenged, learn new things, and remember previously known facts, r
 """
 
 DIFFICULTY_DESCRIPTION = {
-    "Easy": "<difficulty> Easy </difficulty> \n\n Easy: Use well-known facts (e.g. historical events, people). Knowledge of a high school student. Maximum char length = 6 letters",
+    "Easy": "<difficulty> Easy </difficulty> \n\n Easy: Use well-known facts (e.g. historical events, people). Knowledge of a high school student. Prioritize shorter words / answers.",
     "Medium": "<difficulty> Medium </difficulty> \n\n Medium: Requires some specific historical, scientific, pop culture knowledge. Knowledge of a college graduate.",
     "Hard": "<difficulty> Hard </difficulty> \n\n Hard: Create challenging clues that may involve graduate-level historical, scientific, cultural references. Knowledge of a graduate degree.",
 }

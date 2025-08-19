@@ -4,7 +4,6 @@ from typing import Optional
 import anthropic
 from pydantic import BaseModel, Field
 
-from src.crossword.constants import CLUE_GENERATION_MODEL
 from src.crossword.prompts import (
     CLUE_GENERATION_PROMPT,
     CLUE_GENERATION_SYSTEM_PROMPT,
@@ -12,6 +11,8 @@ from src.crossword.prompts import (
     DIFFICULTY_DESCRIPTION,
 )
 from src.weaviate_client import WeaviateClient
+
+MAX_TOKENS = 8192
 
 
 class CrosswordClue(BaseModel):
@@ -30,11 +31,15 @@ class CrosswordClueResponse(BaseModel):
 
 
 class ClueGenerator:
-    def __init__(self):
+    def __init__(self, model: str):
         self.anthropic_client = anthropic.Anthropic()
+        self.model = model
 
     def generate_clues(
-        self, topic_str: Optional[str] = None, difficulty: Optional[str] = None
+        self,
+        topic_str: Optional[str] = None,
+        difficulty: Optional[str] = None,
+        num_clues: Optional[int] = 30,
     ) -> CrosswordClueResponse:
         """
         Generate clues based on the provided topic, difficulty, and size.
@@ -48,21 +53,21 @@ class ClueGenerator:
             None
         """
         logging.info(
-            f"Generating clues for topics: {topic_str}, difficulty: {difficulty}"
+            f"Generating clues for topics: {topic_str}, difficulty: {difficulty}, num_clues: {num_clues}"
         )
         topic_prompt_str = ""
         if topic_str:
             topics = [topic.strip() for topic in topic_str.split(",")]
             logging.info(f"Parsed topics: {topics}")
-            # clue_examples = self._get_clue_examples(topic_str) TODO: Add back after testing
+            clue_examples = self._get_clue_examples(topic_str)
             topic_prompt_str = CLUE_GENERATION_TOPIC_PROMPT.format(
                 topic_str=topic_str,
-                # clue_examples=clue_examples,
+                clue_examples=clue_examples,
             )
         prompt = CLUE_GENERATION_PROMPT.format(
             topics=topic_prompt_str,
             difficulty=DIFFICULTY_DESCRIPTION.get(difficulty),
-            num_clues=30,
+            num_clues=num_clues,
         )
         clues = self._get_clues(prompt)
         return clues
@@ -78,8 +83,8 @@ class ClueGenerator:
             list[CrosswordClue]: List of generated clues.
         """
         response = self.anthropic_client.messages.create(
-            model=CLUE_GENERATION_MODEL,
-            max_tokens=8192,
+            model=self.model,
+            max_tokens=MAX_TOKENS,
             tools=[
                 {
                     "name": "generate_crossword_clues",

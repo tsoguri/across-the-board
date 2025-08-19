@@ -1,0 +1,16 @@
+CLAUDE_MODELS = [
+    "claude-3-5-haiku-20241022",
+    "claude-3-5-sonnet-20240620",
+    "claude-3-5-sonnet-20241022",
+    "claude-3-7-sonnet-20250219",
+    "claude-3-haiku-20240307",
+    "claude-3-opus-20240229",
+    "claude-sonnet-4-20250514",
+    "claude-opus-4-20250514",
+    "claude-opus-4-1-20250805",
+]
+DIFFICULTY_LEVEL = ["Easy", "Medium", "Hard"]
+
+CHAT_TYPE = ["Get a Hint", "Deep Dive into the Answer"]
+
+BLOCK_TOKEN = "⬛⬛"

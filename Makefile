@@ -22,7 +22,7 @@ run-local:
 	uv run python $(SETUP_SCRIPT)
 	@if [ -n "$(APP)" ]; then \
 		echo "Starting Streamlit app: $(APP)"; \
-		uv run streamlit run -m $(APP); \
+		uv run -m streamlit run $(APP); \
 	else \
 		echo "No APP specified. Skipping Streamlit."; \
 	fi

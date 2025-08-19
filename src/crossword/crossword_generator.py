@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Literal, Tuple
 
+import pandas as pd
+
 from src.crossword.clue_generator import CrosswordClue
 
 
@@ -41,7 +43,7 @@ class CrosswordGenerator:
         ]
         self.placements: List[Placement] = []
 
-    def generate(self) -> Tuple[List[List[str]], List[Placement]]:
+    def generate(self) -> Tuple[pd.DataFrame, List[Placement]]:
         self._place_first()
 
         remaining = [w for w in self.words[1:]]
@@ -56,7 +58,7 @@ class CrosswordGenerator:
                 else:
                     next_remaining.append(word)
             remaining = next_remaining
-        return self.grid, self.placements
+        return pd.DataFrame(self.grid), self.placements
 
     def _place_first(self) -> None:
         first = self.words[0]
