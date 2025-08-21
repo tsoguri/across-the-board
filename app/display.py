@@ -16,6 +16,7 @@ from src.crossword.crossword_generator import (
 
 class AppDisplay:
     def __init__(self):
+        self.chat_service = ChatService(model=CLAUDE_MODELS[1])
         self.init_session_states()
 
     def draw(self):
@@ -171,25 +172,24 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
             st.info("Select a clue above to start a conversation.")
             return
 
-        chat_service = ChatService(model=CLAUDE_MODELS[1])
         if st.session_state.pending_clue_response:
-            self._get_opener_response(chat_service=chat_service)
+            self._get_opener_response()
 
         messages_container = st.container(height=500, border=True)
         self.render_messages(messages_container)
         user_text = st.chat_input("Ask me anything!", key="chat_input_main")
         if user_text:
-            self.render_chat_response(chat_service, messages_container, user_text)
+            self.render_chat_response(messages_container, user_text)
             st.rerun()
 
-    def render_chat_response(self, chat_service, messages_container, user_text):
+    def render_chat_response(self, messages_container, user_text):
         with messages_container.chat_message("user"):
             st.session_state.chat_history.append({"role": "user", "content": user_text})
             st.write(user_text)
 
         with messages_container.chat_message("assistant"):
             with st.spinner("Generating response..."):
-                response = chat_service.generate_response(
+                response = self.chat_service.generate_response(
                     user_input=user_text,
                     clue=st.session_state.selected_clue,
                     type=st.session_state.chat_type,
@@ -205,7 +205,7 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
             with messages_container.chat_message(msg["role"]):
                 st.write(msg["content"])
 
-    def _get_opener_response(self, chat_service):
+    def _get_opener_response(self):
         opener = (
             (
                 "Give me an initial direction how to think about the clue. "
@@ -217,7 +217,7 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
                 "Ask me if there's anything specific I want to know about this topic."
             )
         )
-        response = chat_service.generate_response(
+        response = self.chat_service.generate_response(
             user_input=opener,
             clue=st.session_state.selected_clue,
             type=st.session_state.chat_type,
