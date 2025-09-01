@@ -4,9 +4,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from app.api_client import APIClient
 from app.constants import BLOCK_TOKEN, CHAT_TYPE, CLAUDE_MODELS, DIFFICULTY_LEVEL
-from src.chat.chat_service import ChatService
-from src.crossword.clue_generator import ClueGenerator
 from src.crossword.crossword_generator import (
     CrosswordClue,
     CrosswordGenerator,
@@ -16,8 +15,15 @@ from src.crossword.crossword_generator import (
 
 class AppDisplay:
     def __init__(self):
-        self.chat_service = ChatService(model=CLAUDE_MODELS[1])
+        self.api_client = APIClient()
         self.init_session_states()
+
+        # Check API health on initialization
+        if not self.api_client.health_check():
+            st.error(
+                "❌ API server is not running! Please start it with: python scripts/run_api.py"
+            )
+            st.stop()
 
     def draw(self):
         submitted = self.display_crossword_form()
@@ -117,23 +123,27 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
 
     def generate_crossword(self):
         self.reset_non_form_states()
-        with st.spinner("Setting up your crossword..."):
-            clue_generator = ClueGenerator(model=st.session_state.clue_model)
         with st.spinner("Generating clues..."):
-            clue_response = clue_generator.generate_clues(
+            clue_response = self.api_client.generate_clues(
                 topic_str=st.session_state.topics,
                 difficulty=st.session_state.difficulty_level,
                 num_clues=st.session_state.num_clues,
+                model=st.session_state.clue_model,
             )
-        if clue_response:
+        if clue_response and clue_response.clues:
             with st.spinner("Creating crossword..."):
-                crossword_generator = CrosswordGenerator(clues=clue_response.clues)
-                grid, placements = crossword_generator.generate()
-                st.session_state.grid = grid
-                st.session_state.placements = sorted(
-                    sorted(placements, key=lambda x: x.col), key=lambda x: x.row
-                )
-                st.session_state.user_grid = None
+                result = self.api_client.generate_crossword(clues=clue_response.clues)
+                if result:
+                    grid, placements = result
+                    st.session_state.grid = grid
+                    st.session_state.placements = sorted(
+                        sorted(placements, key=lambda x: x.col), key=lambda x: x.row
+                    )
+                    st.session_state.user_grid = None
+                else:
+                    st.session_state.grid = None
+                    st.session_state.placements = None
+                    st.session_state.user_grid = None
         else:
             st.session_state.grid = None
             st.session_state.placements = None
@@ -189,16 +199,20 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
 
         with messages_container.chat_message("assistant"):
             with st.spinner("Generating response..."):
-                response = self.chat_service.generate_response(
+                response = self.api_client.generate_chat_response(
                     user_input=user_text,
                     clue=st.session_state.selected_clue,
-                    type=st.session_state.chat_type,
+                    chat_type=st.session_state.chat_type,
                     historical_messages=st.session_state.chat_history,
+                    model=CLAUDE_MODELS[1],
                 )
-            st.session_state.chat_history.append(
-                {"role": "assistant", "content": response}
-            )
-            st.write(response)
+            if response:
+                st.session_state.chat_history.append(
+                    {"role": "assistant", "content": response}
+                )
+                st.write(response)
+            else:
+                st.error("Failed to generate response. Please try again.")
 
     def render_messages(self, messages_container):
         for msg in st.session_state.chat_history:
@@ -217,13 +231,17 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
                 "Ask me if there's anything specific I want to know about this topic."
             )
         )
-        response = self.chat_service.generate_response(
+        response = self.api_client.generate_chat_response(
             user_input=opener,
             clue=st.session_state.selected_clue,
-            type=st.session_state.chat_type,
+            chat_type=st.session_state.chat_type,
             historical_messages=st.session_state.chat_history,
+            model=CLAUDE_MODELS[1],
         )
-        st.session_state.chat_history.append({"role": "assistant", "content": response})
+        if response:
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": response}
+            )
         st.session_state.pending_clue_response = False
 
     def render_chat_settings(self):

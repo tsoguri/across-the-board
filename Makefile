@@ -6,6 +6,7 @@ endif
 
 
 COMPOSE ?= docker compose
+SETUP_SCRIPT ?= scripts/setup_weaviate.py
 
 .PHONY: init-workspace run-local stop-local clean-local logs-local format lint
 
@@ -14,27 +15,33 @@ init-workspace:
 	@./scripts/setup_env.sh
 	uv sync
 
-# Start Weaviate, wait until healthy, run setup script, then (optionally) start Streamlit
+# Start Weaviate, wait until healthy, run setup script, start API server, then start Streamlit
 run-local:
 	@echo "Starting Weaviate with Docker Compose..."
 	@$(COMPOSE) up -d --wait --wait-timeout 300
 	@echo "Running setup script to load sample vectors..."
 	uv run python $(SETUP_SCRIPT)
-	@if [ -n "$(APP)" ]; then \
-		echo "Starting Streamlit app: $(APP)"; \
-		uv run -m streamlit run $(APP); \
-	else \
-		echo "No APP specified. Skipping Streamlit."; \
-	fi
+	@echo "==============================================="
+	@echo "Starting FastAPI server in background..."
+	@uv run python scripts/run_api.py &
+	@echo "Waiting for API server to start..."
+	@sleep 5
+	@echo "==============================================="
+	@echo "Starting Streamlit app..."
+	@uv run -m streamlit run app/main.py
 
 
 # Stop and remove containers (keeps volumes)
 stop-local:
+	@echo "Stopping FastAPI server..."
+	@pkill -f "scripts/run_api.py" || true
 	@echo "Stopping Weaviate stack..."
 	@$(COMPOSE) down
 
 # Stop and remove containers + volumes (wipes data)
 clean-local:
+	@echo "Stopping FastAPI server..."
+	@pkill -f "scripts/run_api.py" || true
 	@echo "Stopping Weaviate stack and removing volumes..."
 	@$(COMPOSE) down -v
 
@@ -48,4 +55,4 @@ format:
 # Lint code with Ruff
 lint:
 	@echo "Linting code with Ruff..."
-	uv run ruff check .
+	uv run ruff check . --fix

@@ -132,6 +132,8 @@ def main() -> int:
     client = weaviate.connect_to_local(host=WEAVIATE_HOST, port=WEAVIATE_PORT)
 
     try:
+        make_collection(client)
+
         if not os.path.exists(JSON_PATH):
             print(f"ERROR: JSON file not found at {JSON_PATH}", file=sys.stderr)
             return 0
@@ -162,8 +164,6 @@ def main() -> int:
                 f"No valid '{KEY_VECTOR}' found in the first {N_PEEK} rows; cannot run demo query.",
                 file=sys.stderr,
             )
-
-        make_collection(client)
 
         # Chain the peeked rows back with the iterator
         def all_rows():

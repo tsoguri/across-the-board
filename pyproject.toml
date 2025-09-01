@@ -9,6 +9,9 @@ dependencies = [
     "pydantic-settings>=2.10.1",
     "streamlit>=1.48.1",
     "weaviate-client>=4.16.7",
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.23.0",
+    "httpx>=0.24.0",
 ]
 
 [dependency-groups]

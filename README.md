@@ -2,7 +2,7 @@
 
 Personalized crosswords auto-generated for your interests to spur your memory and mental acuity - across topics & across the crossword board. 
 
-🚀 Built during a **1-day sprint** - exploratory, intentionally incomplete
+🚀 Built during a **2-day sprint** - exploratory, intentionally incomplete
 
 ### Features
 
@@ -25,11 +25,16 @@ Personalized crosswords auto-generated for your interests to spur your memory an
 2. Run `make run-local`
 3. Open the local Streamlit app at the URL provided (e.g., `http://localhost:8501`)
 
+This will automatically start:
+- Weaviate vector database
+- FastAPI backend server (with Swagger UI at `http://localhost:8000/docs`)
+- Streamlit frontend
+
 > **Note**: The NYT clue embeddings corpus is not included in this repository due to GitHub size limits. The app will still run without this dataset.
 
 ## Problem
 
-Off of the viral MIT research paper ["Your Brian on ChatGPT: Accumulation of Cognitive Debt when Using an AI Assistant for Essay Writing Task"](https://arxiv.org/pdf/2506.08872) I've become more aware of the impact that leveraging GenAI has on our cognitive engagement. These MIT researchers found that using LLMs for essay writing resulted in **weaker neural connectivity** compared to "brain-only" writing. Worse, those effects lingered even after the AI use stopped. 
+Off of the viral MIT research paper ["Your Brain on ChatGPT: Accumulation of Cognitive Debt when Using an AI Assistant for Essay Writing Task"](https://arxiv.org/pdf/2506.08872) I've become more aware of the impact that leveraging GenAI has on our cognitive engagement. These MIT researchers found that using LLMs for essay writing resulted in **weaker neural connectivity** compared to "brain-only" writing. Worse, those effects lingered even after the AI use stopped. 
 
 At the same time, I have personally seen how LLMs and Generative AI can be used to broaden my knowledge base and enhance my productivity. 
 
@@ -66,9 +71,28 @@ Without overengineering and trying to re-invent crossword creating and building 
   - Denser is better, without going deep into the crossword fill algorithm
 - Reuse existing resources like ["century-arcade/xd"](https://github.com/century-arcade/xd) and ["Crossword Constructor Resource Guide (NYT)"](https://www.nytimes.com/2021/11/08/crosswords/crossword-constructor-resource-guide.html)
 
-## Techncial Design 
+## Technical Design 
 
 This prototype demonstrates how embeddings, LLMs, and a simple crossword generator can be combined into an interactive learning tool.
+
+### Architecture Overview
+```
+┌─────────────────┐     HTTP Requests     ┌─────────────────┐
+│   Streamlit     │ ────────────────────► │    FastAPI      │
+│   Frontend      │                       │    Backend      │
+│   (Port 8501)   │ ◄──────────────────── │   (Port 8000)   │
+└─────────────────┘     JSON Responses    └─────────────────┘
+                                                    │
+                                                    ▼
+                                          ┌─────────────────┐
+                                          │  Core Services  │
+                                          │  • ClueGenerator │
+                                          │  • ChatService   │
+                                          │  • CrosswordGen  │
+                                          └─────────────────┘
+```
+
+The application uses a FastAPI backend to expose core functionality as REST endpoints, providing separation of concerns, better scalability, and interactive API documentation.
 
 ### Data & Embeddings
 
