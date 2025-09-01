@@ -84,12 +84,12 @@ This prototype demonstrates how embeddings, LLMs, and a simple crossword generat
 └─────────────────┘     JSON Responses    └─────────────────┘
                                                     │
                                                     ▼
-                                          ┌─────────────────┐
-                                          │  Core Services  │
+                                          ┌──────────────────┐
+                                          │  Core Services   │
                                           │  • ClueGenerator │
                                           │  • ChatService   │
                                           │  • CrosswordGen  │
-                                          └─────────────────┘
+                                          └──────────────────┘
 ```
 
 The application uses a FastAPI backend to expose core functionality as REST endpoints, providing separation of concerns, better scalability, and interactive API documentation.
