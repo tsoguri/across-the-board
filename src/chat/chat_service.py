@@ -1,8 +1,8 @@
 import anthropic
 
-from app.constants import CHAT_TYPE
 from src.chat.prompts import HINT_SYSTEM_PROMPT, RESEARCH_SYSTEM_PROMPT
 from src.crossword.clue_generator import CrosswordClue
+from streamlit_app.constants import CHAT_TYPE
 
 MAX_TOKENS = 8192
 

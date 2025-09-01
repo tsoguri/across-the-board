@@ -5,7 +5,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from app.constants import CLAUDE_MODELS
 from src.chat.chat_service import ChatService
 from src.crossword.clue_generator import (
     ClueGenerator,
@@ -13,6 +12,7 @@ from src.crossword.clue_generator import (
     CrosswordClueResponse,
 )
 from src.crossword.crossword_generator import CrosswordGenerator
+from streamlit_app.constants import CLAUDE_MODELS
 
 app = FastAPI(
     title="Across the Board API",

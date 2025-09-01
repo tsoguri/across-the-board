@@ -4,12 +4,17 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from app.api_client import APIClient
-from app.constants import BLOCK_TOKEN, CHAT_TYPE, CLAUDE_MODELS, DIFFICULTY_LEVEL
 from src.crossword.crossword_generator import (
     CrosswordClue,
     CrosswordGenerator,
     Placement,
+)
+from streamlit_app.api_client import APIClient
+from streamlit_app.constants import (
+    BLOCK_TOKEN,
+    CHAT_TYPE,
+    CLAUDE_MODELS,
+    DIFFICULTY_LEVEL,
 )
 
 

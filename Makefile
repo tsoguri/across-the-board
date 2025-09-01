@@ -28,7 +28,7 @@ run-local:
 	@sleep 5
 	@echo "==============================================="
 	@echo "Starting Streamlit app..."
-	@uv run -m streamlit run app/main.py
+	@uv run -m streamlit run streamlit_app/main.py
 
 
 # Stop and remove containers (keeps volumes)

@@ -25,7 +25,7 @@ KEY_VECTOR=embedding_vector
 EMBEDDING_MODEL=Qwen/Qwen3-Embedding-0.6B
 
 # Optionally point to a Streamlit app to launch after setup
-APP=app/main.py
+APP=streamlit_app/main.py
 
 EOF
 
