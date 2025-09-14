@@ -9,8 +9,9 @@ COMPOSE ?= docker compose
 WEAVIATE_SCRIPT ?= scripts/setup_weaviate.py
 API_SCRIPT ?= scripts/run_api.py
 STREAMLIT_PATH ?= streamlit_app/main.py
+REACT_PATH ?= react_app
 
-.PHONY: init-workspace run-local stop-local clean-local logs-local format lint
+.PHONY: init-workspace run-local run-streamlit run-react stop-local clean-local logs-local format lint
 
 init-workspace:
 	@echo "Initializing workspace..."
@@ -18,7 +19,7 @@ init-workspace:
 	uv sync
 
 # Start Weaviate, wait until healthy, run setup script, start API server, then start Streamlit
-run-local:
+run-streamlit:
 	@echo "Starting Weaviate with Docker Compose..."
 	@$(COMPOSE) up -d --wait --wait-timeout 300
 	@echo "Running setup script to load sample vectors..."
@@ -31,6 +32,21 @@ run-local:
 	@echo "==============================================="
 	@echo "Starting Streamlit app..."
 	@uv run -m streamlit run $(STREAMLIT_PATH)
+
+# Start Weaviate, wait until healthy, run setup script, start API server, then start React
+run-react:
+	@echo "Starting Weaviate with Docker Compose..."
+	@$(COMPOSE) up -d --wait --wait-timeout 300
+	@echo "Running setup script to load sample vectors..."
+	uv run python $(WEAVIATE_SCRIPT)
+	@echo "==============================================="
+	@echo "Starting FastAPI server in background..."
+	@uv run python $(API_SCRIPT) &
+	@echo "Waiting for API server to start..."
+	@sleep 5
+	@echo "==============================================="
+	@echo "Starting React app..."
+	@cd $(REACT_PATH) && npm run dev
 
 # Stop and remove containers (keeps volumes)
 stop-local:

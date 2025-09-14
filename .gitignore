@@ -1,3 +1,4 @@
 .env
 *.pyc
 .python-version
+react_app/node_moduless
