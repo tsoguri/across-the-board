@@ -122,9 +122,9 @@ export default function CrosswordClues({
                           py: 0.25,
                           fontSize: '13px',
                           lineHeight: 1.5,
-                          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                          bgcolor: 'secondary.light',
                           '&:hover': {
-                            background: 'linear-gradient(135deg, #d97706, #b45309)',
+                            bgcolor: 'secondary.main',
                           }
                         }}
                       >
@@ -143,9 +143,9 @@ export default function CrosswordClues({
                           py: 0.25,
                           fontSize: '13px',
                           lineHeight: 1.5,
-                          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                          bgcolor: 'primary.main',
                           '&:hover': {
-                            background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+                            bgcolor: 'primary.dark',
                           }
                         }}
                       >
@@ -163,11 +163,7 @@ export default function CrosswordClues({
   );
 
   return (
-    <Paper sx={{ p: 3, height: 'fit-content' }}>
-      <Typography variant="h5" component="h3" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <span style={{ marginRight: 8 }}>🔍</span>
-        Clues
-      </Typography>
+    <Paper elevation={3} sx={{ p: 3, height: 'fit-content' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {renderClueList('Across', acrossClues)}
         {renderClueList('Down', downClues)}

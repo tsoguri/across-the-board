@@ -12,18 +12,18 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#6366f1',
-      light: '#818cf8',
-      dark: '#4f46e5',
+      main: '#1e40af', // cobalt blue
+      light: '#3b82f6',
+      dark: '#1e3a8a',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#f59e0b',
-      light: '#fbbf24',
-      dark: '#d97706',
+      main: '#f97316', // orange
+      light: '#fb923c',
+      dark: '#ea580c',
     },
     background: {
-      default: '#fafbfc',
+      default: '#ffffff',
       paper: '#ffffff',
     },
     grey: {
@@ -34,9 +34,13 @@ const theme = createTheme({
       400: '#9ca3af',
       500: '#6b7280',
       600: '#4b5563',
-      700: '#374151',
+      700: '#374151', // dark grey for text
       800: '#1f2937',
       900: '#111827',
+    },
+    text: {
+      primary: '#374151', // dark grey
+      secondary: '#6b7280', // lighter grey for captions
     },
     success: {
       main: '#10b981',
@@ -95,9 +99,9 @@ const theme = createTheme({
           },
         },
         contained: {
-          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+          backgroundColor: '#1e40af',
           '&:hover': {
-            background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+            backgroundColor: '#1e3a8a',
           },
         },
         outlined: {

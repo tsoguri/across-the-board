@@ -10,12 +10,8 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton
+  Paper,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import CrosswordForm from '../components/CrosswordForm';
 import CrosswordGrid from '../components/CrosswordGrid';
 import CrosswordClues from '../components/CrosswordClues';
@@ -194,7 +190,7 @@ export default function Home() {
       <Box
         sx={{
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          bgcolor: 'background.default',
           display: 'flex',
           alignItems: 'center',
           py: 4,
@@ -207,9 +203,8 @@ export default function Home() {
               component="h1" 
               gutterBottom 
               sx={{ 
-                color: 'white',
+                color: 'primary.main',
                 mb: 2,
-                textShadow: '0 4px 8px rgba(0,0,0,0.2)',
               }}
             >
               Across the Board
@@ -217,7 +212,7 @@ export default function Home() {
             <Typography 
               variant="h5" 
               sx={{ 
-                color: 'rgba(255,255,255,0.9)',
+                color: 'text.secondary',
                 fontWeight: 400,
                 mb: 4,
               }}
@@ -226,13 +221,10 @@ export default function Home() {
             </Typography>
           </Box>
 
-          <Box
+          <Paper
+            elevation={3}
             sx={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: 4,
               p: 4,
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             }}
           >
             <CrosswordForm onSubmit={handleFormSubmit} isLoading={isLoading} />
@@ -242,12 +234,12 @@ export default function Home() {
                 <CircularProgress 
                   sx={{ 
                     mb: 2,
-                    color: 'primary.main',
+                    color: 'secondary.main',
                   }} 
                 />
               </Box>
             )}
-          </Box>
+          </Paper>
         </Container>
       </Box>
     );
@@ -257,32 +249,40 @@ export default function Home() {
   return (
     <Box sx={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      bgcolor: 'background.default',
       py: 4,
     }}>
       <Container maxWidth="xl">
-        <Button 
+        <Paper 
+          elevation={3}
+          sx={{ 
+            display: 'inline-block',
+            mb: 4,
+          }}
+        >
+          <Button 
             variant="outlined" 
             onClick={() => setCurrentPage('form')}
             startIcon={<Box component="span">←</Box>}
             sx={{ 
-              bgcolor: 'rgba(255, 255, 255, 0.95)',
-              mb: 4,
               px: 3,
               py: 1.5,
+              border: 'none',
+              '&:hover': {
+                border: 'none',
+                bgcolor: 'primary.50',
+              }
             }}
           >
             Back to Form
           </Button>
+        </Paper>
 
         {grid && placements.length > 0 && (
-          <Box
+          <Paper
+            elevation={3}
             sx={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: 4,
               p: 4,
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             }}
           >
             <Box sx={{ display: 'flex', gap: 4, alignItems: 'flex-start' }}>
@@ -316,51 +316,19 @@ export default function Home() {
                 />
               </Box>
             </Box>
-          </Box>
+          </Paper>
         )}
 
-        {/* Chat Dialog */}
-        <Dialog
-          open={chatOpen}
-          onClose={() => setChatOpen(false)}
-          maxWidth="md"
-          fullWidth
-          slotProps={{
-            paper: {
-              sx: {
-                borderRadius: 3,
-                minHeight: '60vh',
-              }
-            }
-          }}
-        >
-          <DialogTitle sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            color: 'white',
-          }}>
-            <Typography variant="h6" component="div">
-              {chatType === 'Get a Hint' ? '💡 Get a Hint' : '🔍 Deep Dive'}
-            </Typography>
-            <IconButton
-              aria-label="close"
-              onClick={() => setChatOpen(false)}
-              sx={{ color: 'white' }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ p: 0 }}>
-            <ChatInterface
-              selectedClue={selectedClue}
-              onSendMessage={handleSendMessage}
-              isLoading={isChatLoading}
-              chatType={chatType}
-            />
-          </DialogContent>
-        </Dialog>
+        {/* Floating Chat Widget */}
+        {chatOpen && (
+          <ChatInterface
+            selectedClue={selectedClue}
+            onSendMessage={handleSendMessage}
+            isLoading={isChatLoading}
+            chatType={chatType}
+            onClose={() => setChatOpen(false)}
+          />
+        )}
       </Container>
     </Box>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, TextField } from '@mui/material';
+import { Box, TextField, Paper } from '@mui/material';
 import { CrosswordGrid as GridType, BLOCK_TOKEN, EMPTY_CELL } from '../lib/types';
 
 interface CrosswordGridProps {
@@ -52,15 +52,13 @@ export default function CrosswordGrid({
   };
 
   return (
-    <Box sx={{ 
-      display: 'inline-block', 
-      p: 3, 
-      bgcolor: 'white', 
-      borderRadius: 2,
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-      border: '1px solid',
-      borderColor: 'grey.200',
-    }}>
+    <Paper 
+      elevation={3}
+      sx={{ 
+        display: 'inline-block', 
+        p: 3, 
+      }}
+    >
       {grid.map((row, rowIndex) => (
         <Box key={rowIndex} sx={{ display: 'flex', gap: 0.5 }}>
           {row.map((_, colIndex) => {
@@ -160,6 +158,6 @@ export default function CrosswordGrid({
           })}
         </Box>
       ))}
-    </Box>
+    </Paper>
   );
 }
