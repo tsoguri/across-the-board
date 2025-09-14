@@ -66,6 +66,8 @@ export default function Home() {
       setUserGrid(null);
       setSelectedClue(null);
       setShowAnswers(false);
+      setChatOpen(false);
+      setChatType('');
 
       // Generate clues
       const clueResponse = await apiClient.generateClues({

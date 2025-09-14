@@ -2,7 +2,7 @@
 
 Personalized crosswords auto-generated for your interests to spur your memory and mental acuity - across topics & across the crossword board. 
 
-🚀 Built during a **2-day sprint** - exploratory, intentionally incomplete
+🚀 Built during a **quick sprint** - exploratory, intentionally incomplete
 
 ### Features
 
@@ -12,23 +12,28 @@ Personalized crosswords auto-generated for your interests to spur your memory an
 - **Deep dives**: explore facts further with built-in research + LLM Q&A
 
 <p align="center">
-  <img src="docs/img/app.png" alt="app" width="500"/>
+  <img src="docs/img/react_app.png" alt="app" width="500"/>
 </p>
 
 <p align="center">
-  <img src="docs/img/deep-dive.png" alt="deep dive" width="500"/>
+  <img src="docs/img/react_crossword.png" alt="deep dive" width="500"/>
+</p>
+
+An initial app prototype was built in Streamlit as shown below
+<p align="center">
+  <img src="docs/img/streamlit_app.png" alt="deep dive" width="500"/>
 </p>
 
 ## Running It Locally
 
 1. Run `make init-workspace`
-2. Run `make run-local`
-3. Open the local Streamlit app at the URL provided (e.g., `http://localhost:8501`)
+2. Run `make run-react` to run the React app and API (Served at `http://localhost:3001`)
+3. Run `make run-streamlit` to run the Streamlit app and API (Served at `http://localhost:8501`)
 
 This will automatically start:
 - Weaviate vector database
 - FastAPI backend server (with Swagger UI at `http://localhost:8000/docs`)
-- Streamlit frontend
+- Streamlit or React frontend
 
 > **Note**: The NYT clue embeddings corpus is not included in this repository due to GitHub size limits. The app will still run without this dataset.
 
@@ -78,11 +83,16 @@ This prototype demonstrates how embeddings, LLMs, and a simple crossword generat
 ### Architecture Overview
 ```
 ┌─────────────────┐     HTTP Requests     ┌─────────────────┐
-│   Streamlit     │ ────────────────────► │    FastAPI      │
+│     React       │ ────────────────────► │    FastAPI      │
 │   Frontend      │                       │    Backend      │
-│   (Port 8501)   │ ◄──────────────────── │   (Port 8000)   │
+│   (Port 3001)   │ ◄──────────────────── │   (Port 8000)   │
 └─────────────────┘     JSON Responses    └─────────────────┘
                                                     │
+┌─────────────────┐     HTTP Requests               │
+│   Streamlit     │ ────────────────────►           │
+│   Frontend      │                                 │
+│   (Port 8501)   │ ◄────────────────────           │
+└─────────────────┘     JSON Responses              │
                                                     ▼
                                           ┌──────────────────┐
                                           │  Core Services   │
@@ -92,7 +102,10 @@ This prototype demonstrates how embeddings, LLMs, and a simple crossword generat
                                           └──────────────────┘
 ```
 
-The application uses a FastAPI backend to expose core functionality as REST endpoints, providing separation of concerns, better scalability, and interactive API documentation.
+The application uses a FastAPI backend to expose core functionality as REST endpoints, providing separation of concerns, better scalability, and interactive API documentation. Two frontend options are available:
+
+- **React App** (Next.js): Modern web interface built with Next.js, Material-UI, and TypeScript for enhanced user experience and interactivity
+- **Streamlit App**: Rapid prototyping interface for quick development and testing
 
 ### Data & Embeddings
 
@@ -112,7 +125,9 @@ The application uses a FastAPI backend to expose core functionality as REST endp
      * Place longest word in center
      * Iteratively fit remaining words at intersections
      * Ensure valid overlaps (no butt-joins, all words from clue list)
-4. **UI Rendering**: **Streamlit** app for crossword play + session state mgmt
+4. **UI Rendering**: Two frontend options available:
+   * **React App**: Modern Next.js interface with Material-UI components, TypeScript support, and enhanced crossword interaction
+   * **Streamlit App**: Rapid prototyping interface for crossword play + session state mgmt
 5. **LLM Features**
     * **Claude models** power:
       * *Deep Dive into Answer* (contextual exploration)
@@ -120,6 +135,9 @@ The application uses a FastAPI backend to expose core functionality as REST endp
 
 ### Developer Tooling
   * **uv** for Python env management
+  * **npm/yarn** for Node.js dependency management
+  * **Next.js** for React framework and development server
+  * **TypeScript** for type safety in React components
   * **Makefile** for build/test automation
   * **Docker Compose** for Weaviate
   * **ruff** + **pre-commit** for linting and style checks
