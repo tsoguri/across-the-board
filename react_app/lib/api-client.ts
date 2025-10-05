@@ -113,4 +113,24 @@ export class APIClient {
       return [];
     }
   }
+
+  async getDifficultyLevels(): Promise<string[]> {
+    try {
+      const response = await this.client.get('/api/difficulty-levels');
+      return response.data.difficulty_levels;
+    } catch (error) {
+      console.error('Error getting difficulty levels:', error);
+      return ['Easy', 'Medium', 'Hard']; // Fallback
+    }
+  }
+
+  async getChatTypes(): Promise<string[]> {
+    try {
+      const response = await this.client.get('/api/chat-types');
+      return response.data.chat_types;
+    } catch (error) {
+      console.error('Error getting chat types:', error);
+      return ['Get a Hint', 'Deep Dive into the Answer']; // Fallback
+    }
+  }
 }

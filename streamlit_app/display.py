@@ -10,18 +10,12 @@ from src.crossword.crossword_generator import (
     Placement,
 )
 from streamlit_app.api_client import APIClient
-from streamlit_app.constants import (
-    BLOCK_TOKEN,
-    CHAT_TYPE,
-    CLAUDE_MODELS,
-    DIFFICULTY_LEVEL,
-)
+from streamlit_app.constants import BLOCK_TOKEN
 
 
 class AppDisplay:
     def __init__(self):
         self.api_client = APIClient()
-        self.init_session_states()
 
         # Check API health on initialization
         if not self.api_client.health_check():
@@ -29,6 +23,13 @@ class AppDisplay:
                 "❌ API server is not running! Please start it with: python scripts/run_api.py"
             )
             st.stop()
+
+        # Fetch constants from API
+        self.claude_models = self.api_client.get_available_models()
+        self.difficulty_levels = self.api_client.get_difficulty_levels()
+        self.chat_types = self.api_client.get_chat_types()
+
+        self.init_session_states()
 
     def draw(self):
         submitted = self.display_crossword_form()
@@ -50,16 +51,16 @@ class AppDisplay:
     def init_session_states(self):
         for k, v in [
             ("topics", ""),
-            ("difficulty_level", DIFFICULTY_LEVEL[0]),
+            ("difficulty_level", self.difficulty_levels[0]),
             ("grid", None),
             ("placements", None),
             ("show_answers", False),
-            ("clue_model", CLAUDE_MODELS[0]),
+            ("clue_model", self.claude_models[0]),
             ("num_clues", 30),
             ("editable", True),
             ("user_grid", None),
-            ("chat_type", CHAT_TYPE[0]),
-            ("prev_chat_type", CHAT_TYPE[0]),
+            ("chat_type", self.chat_types[0]),
+            ("prev_chat_type", self.chat_types[0]),
             ("chat_history", []),
             ("selected_clue", None),
             ("last_selected_clue_idx", None),
@@ -78,8 +79,8 @@ class AppDisplay:
             )
             difficulty_level = st.selectbox(
                 "Select difficulty level",
-                options=DIFFICULTY_LEVEL,
-                index=DIFFICULTY_LEVEL.index(st.session_state.difficulty_level),
+                options=self.difficulty_levels,
+                index=self.difficulty_levels.index(st.session_state.difficulty_level),
                 help="""How difficult do you want your crossword to be? 
 Easy – common facts, high school–level knowledge, shorter answers.
 Medium – some specific history/science/pop culture, college-level knowledge.
@@ -88,8 +89,8 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
             with st.expander("Advanced Settings"):
                 clue_model = st.selectbox(
                     "Select clue generation model",
-                    options=CLAUDE_MODELS,
-                    index=CLAUDE_MODELS.index(st.session_state.clue_model),
+                    options=self.claude_models,
+                    index=self.claude_models.index(st.session_state.clue_model),
                 )
                 num_clues = st.number_input(
                     label="Number of clues to generate",
@@ -115,8 +116,8 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
             "show_answers": False,
             "editable": True,
             "user_grid": None,
-            "chat_type": CHAT_TYPE[0],
-            "prev_chat_type": CHAT_TYPE[0],
+            "chat_type": self.chat_types[0],
+            "prev_chat_type": self.chat_types[0],
             "chat_history": [],
             "selected_clue": None,
             "last_selected_clue_idx": None,
@@ -209,7 +210,7 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
                     clue=st.session_state.selected_clue,
                     chat_type=st.session_state.chat_type,
                     historical_messages=st.session_state.chat_history,
-                    model=CLAUDE_MODELS[1],
+                    model=self.claude_models[0],
                 )
             if response:
                 st.session_state.chat_history.append(
@@ -230,7 +231,7 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
                 "Give me an initial direction how to think about the clue. "
                 "Ask me what I know / think I know about this clue already."
             )
-            if st.session_state.chat_type == CHAT_TYPE[0]
+            if st.session_state.chat_type == self.chat_types[0]
             else (
                 "Provide me a brief intellectual, academic overview of this topic. "
                 "Ask me if there's anything specific I want to know about this topic."
@@ -241,7 +242,7 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
             clue=st.session_state.selected_clue,
             chat_type=st.session_state.chat_type,
             historical_messages=st.session_state.chat_history,
-            model=CLAUDE_MODELS[1],
+            model=self.claude_models[0],
         )
         if response:
             st.session_state.chat_history.append(
@@ -254,8 +255,8 @@ Hard – tougher references, grad-level knowledge, trickier clues.""",
         with col1:
             chat_type = st.selectbox(
                 "Type",
-                options=CHAT_TYPE,
-                index=CHAT_TYPE.index(st.session_state.chat_type),
+                options=self.chat_types,
+                index=self.chat_types.index(st.session_state.chat_type),
                 key="chat_type_select",
             )
         self._reset_chat_on_type_change(chat_type)

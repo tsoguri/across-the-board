@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ReactMarkdown from 'react-markdown';
-import { ChatMessage, CrosswordClue, CHAT_TYPES } from '../lib/types';
+import { ChatMessage, CrosswordClue } from '../lib/types';
 
 interface ChatInterfaceProps {
   selectedClue: CrosswordClue | null;
@@ -46,7 +46,7 @@ export default function ChatInterface({ selectedClue, onSendMessage, isLoading, 
   const handleOpeningMessage = async () => {
     if (!selectedClue) return;
 
-    const opener = chatType === CHAT_TYPES[0]
+    const opener = chatType === 'Get a Hint'
       ? "Give me an initial direction how to think about the clue. Ask me what I know / think I know about this clue already."
       : "Provide me a brief intellectual, academic overview of this topic. Ask me if there's anything specific I want to know about this topic.";
 

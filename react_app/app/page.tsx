@@ -21,13 +21,13 @@ import {
   CrosswordGrid as GridType,
   Placement,
   CrosswordClue,
-  CLAUDE_MODELS,
   EMPTY_CELL,
 } from '../lib/types';
 
 export default function Home() {
   const [apiClient] = useState(() => new APIClient());
   const [isApiHealthy, setIsApiHealthy] = useState<boolean | null>(null);
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
   
@@ -43,13 +43,18 @@ export default function Home() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatType, setChatType] = useState<string>('');
 
-  // Check API health on mount
+  // Check API health and fetch models on mount
   useEffect(() => {
-    const checkHealth = async () => {
+    const initializeApp = async () => {
       const healthy = await apiClient.healthCheck();
       setIsApiHealthy(healthy);
+      
+      if (healthy) {
+        const models = await apiClient.getAvailableModels();
+        setAvailableModels(models);
+      }
     };
-    checkHealth();
+    initializeApp();
   }, [apiClient]);
 
   const handleFormSubmit = async (formData: {
@@ -139,7 +144,7 @@ export default function Home() {
         clue: selectedClue,
         chat_type: chatType,
         historical_messages: [], // For simplicity, not tracking history in this component
-        model: CLAUDE_MODELS[1], // Use Sonnet for chat
+        model: availableModels[0], 
       });
       return response;
     } catch (error) {

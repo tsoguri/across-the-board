@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+from api.constants import CHAT_TYPE, DIFFICULTY_LEVEL, get_cached_claude_models
 from api.models import (
     ChatRequest,
     ChatResponse,
@@ -10,7 +11,6 @@ from api.models import (
 from src.chat.chat_service import ChatService
 from src.crossword.clue_generator import ClueGenerator
 from src.crossword.crossword_generator import CrosswordGenerator
-from streamlit_app.constants import CLAUDE_MODELS
 
 _chat_services = {}
 _clue_generators = {}
@@ -99,4 +99,12 @@ async def generate_chat_response(request: ChatRequest):
 
 
 async def get_available_models():
-    return {"models": CLAUDE_MODELS}
+    return {"models": get_cached_claude_models()}
+
+
+async def get_difficulty_levels():
+    return {"difficulty_levels": DIFFICULTY_LEVEL}
+
+
+async def get_chat_types():
+    return {"chat_types": CHAT_TYPE}

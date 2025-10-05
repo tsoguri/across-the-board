@@ -13,7 +13,7 @@ import {
   Collapse,
 } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
-import { CLAUDE_MODELS, DIFFICULTY_LEVELS } from '../lib/types';
+import { APIClient } from '../lib/api-client';
 
 interface CrosswordFormProps {
   onSubmit: (formData: {
@@ -27,10 +27,30 @@ interface CrosswordFormProps {
 
 export default function CrosswordForm({ onSubmit, isLoading }: CrosswordFormProps) {
   const [topics, setTopics] = useState('');
-  const [difficulty, setDifficulty] = useState(DIFFICULTY_LEVELS[0]);
-  const [clueModel, setClueModel] = useState(CLAUDE_MODELS[0]);
+  const [availableDifficulties, setAvailableDifficulties] = useState<string[]>([]);
+  const [difficulty, setDifficulty] = useState('');
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [clueModel, setClueModel] = useState('');
   const [numClues, setNumClues] = useState(30);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  React.useEffect(() => {
+    const apiClient = new APIClient();
+    Promise.all([
+      apiClient.getAvailableModels(),
+      apiClient.getDifficultyLevels()
+    ]).then(([models, difficulties]) => {
+      setAvailableModels(models);
+      setAvailableDifficulties(difficulties);
+      
+      if (models.length > 0) {
+        setClueModel(models[0]); // Default to first model (Haiku)
+      }
+      if (difficulties.length > 0) {
+        setDifficulty(difficulties[0]); // Default to first difficulty
+      }
+    });
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +81,7 @@ export default function CrosswordForm({ onSubmit, isLoading }: CrosswordFormProp
           label="Difficulty Level"
           onChange={(e) => setDifficulty(e.target.value)}
         >
-          {DIFFICULTY_LEVELS.map((level) => (
+          {availableDifficulties.map((level) => (
             <MenuItem key={level} value={level}>
               {level}
             </MenuItem>
@@ -107,7 +127,7 @@ export default function CrosswordForm({ onSubmit, isLoading }: CrosswordFormProp
               label="Large Language Model"
               onChange={(e) => setClueModel(e.target.value)}
             >
-              {CLAUDE_MODELS.map((model) => (
+              {availableModels.map((model) => (
                 <MenuItem key={model} value={model}>
                   {model}
                 </MenuItem>

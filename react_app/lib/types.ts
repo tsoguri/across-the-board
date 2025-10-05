@@ -42,14 +42,6 @@ export interface GenerateChatRequest {
 export type GridCell = string | null;
 export type CrosswordGrid = GridCell[][];
 
-export const CLAUDE_MODELS = [
-  "claude-3-5-haiku-20241022",
-  "claude-sonnet-4-20250514",
-  "claude-opus-4-20250514",
-  "claude-opus-4-1-20250805",
-];
 
-export const DIFFICULTY_LEVELS = ["Easy", "Medium", "Hard"];
-export const CHAT_TYPES = ["Get a Hint", "Deep Dive into the Answer"];
 export const BLOCK_TOKEN = "⬛⬛";
 export const EMPTY_CELL = "";

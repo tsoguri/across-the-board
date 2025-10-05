@@ -140,3 +140,29 @@ class APIClient:
         except Exception as e:
             logging.error(f"Error getting available models: {e}")
             return []
+
+    def get_difficulty_levels(self) -> List[str]:
+        """Get list of difficulty levels from the API."""
+        try:
+            response = self.client.get(f"{self.base_url}/api/difficulty-levels")
+            response.raise_for_status()
+
+            data = response.json()
+            return data["difficulty_levels"]
+
+        except Exception as e:
+            logging.error(f"Error getting difficulty levels: {e}")
+            return ["Easy", "Medium", "Hard"]  # Fallback
+
+    def get_chat_types(self) -> List[str]:
+        """Get list of chat types from the API."""
+        try:
+            response = self.client.get(f"{self.base_url}/api/chat-types")
+            response.raise_for_status()
+
+            data = response.json()
+            return data["chat_types"]
+
+        except Exception as e:
+            logging.error(f"Error getting chat types: {e}")
+            return ["Get a Hint", "Deep Dive into the Answer"]  # Fallback
