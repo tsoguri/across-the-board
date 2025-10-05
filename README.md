@@ -27,6 +27,7 @@ An initial app prototype was built in Streamlit as shown below
 ## Running It Locally
 
 1. Run `make init-workspace`
+  - Fill in your Anthropic API key in the `.env` file
 2. Run `make run-react` to run the React app and API (Served at `http://localhost:3001`)
 3. Run `make run-streamlit` to run the Streamlit app and API (Served at `http://localhost:8501`)
 

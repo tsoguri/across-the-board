@@ -6,6 +6,8 @@ ENV_FILE=".env"
 
 if [ ! -f "$ENV_FILE" ]; then
   cat > "$ENV_FILE" <<'EOF'
+ANTHROPIC_API_KEY=fill_me_in
+
 # Override defaults if desired
 WEAVIATE_HOST=localhost
 WEAVIATE_PORT=8080
